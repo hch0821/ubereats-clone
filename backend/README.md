@@ -8,6 +8,11 @@ Nest.js, TypeORM, Typescript, PostgreSQL
 
 ## Setup
 
+<details markdown="1">
+<summary>접기/펼치기</summary>
+
+<!--summary 아래 빈칸 공백 두고 내용을 적는공간-->
+
 ### NestJS 설치
 
 ```bash
@@ -270,3 +275,5 @@ https://docs.nestjs.com/graphql/mapped-types
   @Entity()
   export class Restaurant {}
   ```
+
+  </details>
