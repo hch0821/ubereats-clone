@@ -31,7 +31,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod', //typeorm과 db 항상 동기화
-      logging: true, // console에 로그 표시
+      logging: process.env.NODE_ENV !== 'prod', // console에 로그 표시
       entities: [Restaurant],
     }),
     // graphql 스키마 자동 작성

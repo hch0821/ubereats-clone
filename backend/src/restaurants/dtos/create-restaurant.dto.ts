@@ -1,5 +1,5 @@
-import { ArgsType, Field } from '@nestjs/graphql';
-import { IsBoolean, IsString, Length } from 'class-validator'; // 들어온 데이터 유효성 검사 모듈
+import { InputType, OmitType } from '@nestjs/graphql';
+import { Restaurant } from '../entities/restaurant.entity';
 
 /* @InputType(): gql을 작성할 때, 
 mutation{
@@ -17,22 +17,6 @@ mutation{
 이런 식으로 옵션을 쪼개서 넣을 수 있음
 */
 
-@ArgsType()
-export class CreateRestaurantDto {
-  @Field(type => String)
-  @IsString() // string인지 확인
-  @Length(5, 10) // 길이 제한 5 ~ 10
-  name: string;
-
-  @Field(type => Boolean)
-  @IsBoolean()
-  isVegan: boolean;
-
-  @Field(type => String)
-  @IsString()
-  address: string;
-
-  @Field(type => String)
-  @IsString()
-  ownerName: string;
-}
+@InputType()
+// Restaurent 엔티티에서 id를 제외하고 가져옴. OmitType은 InputType클래스에만 동작하므로,
+export class CreateRestaurantDto extends OmitType(Restaurant, ['id']) {}
