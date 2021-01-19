@@ -277,3 +277,67 @@ https://docs.nestjs.com/graphql/mapped-types
   ```
 
   </details>
+
+## User 구현
+
+### User Entity
+
+- id
+- createdAt
+- updatedAt
+
+- email
+- password
+- role(client `손님` |owner `가게주인` | delivery `배달원`)
+
+### User CRUD:
+
+- Create Account
+- Log in
+- See Profile
+- Edit Profile
+- Verify Email
+
+### Hashing password
+
+https://github.com/kelektiv/node.bcrypt.js#readme
+
+```bash
+npm i bcrypt --save
+npm i @types/bcrypt --dev-only
+```
+
+```ts
+// user.entity.ts
+
+/* 사용자가 만들어져 DB에 저장하기 전에 (userRepo.save())
+   인스턴스의 비밀번호 암호화 */
+@BeforeInsert()
+async hashPassword(): Promise<void> {
+  try {
+    this.password = await bcrypt.hash(this.password, 10);
+  } catch (e) {
+    console.log(e);
+    throw new InternalServerErrorException();
+  }
+}
+```
+
+### Comparing password
+
+```ts
+// user.entity.ts
+
+// 사용자가 입력한 평문 비밀번호(aPassword)와
+// db에 저장되어있는 암호화된 비밀번호를 비교(this.password)
+async checkPassword(aPassword: string): Promise<boolean> {
+    try {
+
+      const ok = await bcrypt.compare(aPassword, this.password);
+      return ok;
+    } catch (e) {
+      console.log(e);
+      throw new InternalServerErrorException();
+    }
+  }
+```
