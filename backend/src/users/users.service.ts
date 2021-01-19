@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as jwt from 'jsonwebtoken';
+import { JwtService } from 'src/jwt/jwt.service';
 import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
+import { EditProfileInput } from './dtos/edit-profile.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 
@@ -9,6 +13,8 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    //app.module.ts에서 설정하고, users.module.ts에서 import 했기 때문에 주입할 수 있다.
+    private readonly jwtService: JwtService,
   ) {}
 
   async createAccount({
@@ -49,9 +55,10 @@ export class UsersService {
         };
       }
       // make a JWT and give it to the user
+      const token = this.jwtService.sign(user.id);
       return {
         ok: true,
-        token: 'llalalala',
+        token,
       };
     } catch (error) {
       return {
@@ -59,5 +66,27 @@ export class UsersService {
         error,
       };
     }
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.userRepo.findOne({ id });
+  }
+
+  async editProfile(userId: number, { email, password }: EditProfileInput) {
+    // update email,password where id === userId
+
+    // repository.update 함수는 db에 쿼리 요청만 하고 엔티티를 실제로 업데이트하지 않기 때문에
+    // user.entity.ts에 있는 BeforeUpdate 데코레이터를 실행하지 못한다. ==> save를 이용하자
+    const user = await this.userRepo.findOne(userId);
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    /*
+    Saves a given entity in the database. If entity does not exist in the database then inserts, otherwise updates.
+    */
+    return this.userRepo.save(user);
   }
 }

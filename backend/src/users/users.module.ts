@@ -5,7 +5,8 @@ import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
-  providers: [UsersResolver, UsersService],
+  imports: [TypeOrmModule.forFeature([User])], // import: 엔티티 같은 것을 가져옴
+  providers: [UsersResolver, UsersService], // provider: userService를 갖고 있음
+  exports: [UsersService], // exports: 다른 곳에서도 userService를 주입할 수 있도록 함
 })
 export class UsersModule {}

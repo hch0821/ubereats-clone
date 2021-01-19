@@ -280,6 +280,9 @@ https://docs.nestjs.com/graphql/mapped-types
 
 ## User 구현
 
+<details markdown="1">
+<summary>접기/펼치기</summary>
+
 ### User Entity
 
 - id
@@ -341,3 +344,22 @@ async checkPassword(aPassword: string): Promise<boolean> {
     }
   }
 ```
+
+### User Authentication
+
+누가 자원을 요청하는 지 확인하는 과정
+
+- nestjs의 passport나 passport-jwt를 사용하지 않고 직접 구현
+- json web token 모듈을 사용하여 JWT 생성
+  https://www.npmjs.com/package/jsonwebtoken
+
+  ```bash
+  npm i jsonwebtoken --save
+  npm i @types/jsonwebtoken --only-dev # 설치한 모듈이 js 기반이기 때문에 typescript로 변환하여 설치
+  ```
+
+- 사용자들은 토큰 내부의 담긴 정보를 알 수 있고, 해독을 할 수 있기 때문에 아이디 같은 정보만 담는 것이 좋다.
+
+- https://randomkeygen.com/ 에서 랜덤 토큰 키를 받을 수 있다.
+- 토큰 키는 서버에서 토큰(json web token)이 진짜인지 아닌지 구별할 수 있게 한다.
+  </details>
