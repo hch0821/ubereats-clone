@@ -11,7 +11,9 @@ import * as Joi from 'joi';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
+import { Verification } from './users/entities/verification.entity';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -29,6 +31,9 @@ import { UsersModule } from './users/users.module';
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(), // JWT 토큰 키
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_DOMAIN_NAME: Joi.string().required(),
+        MAILGUN_FROM_EMAIL: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -40,7 +45,7 @@ import { UsersModule } from './users/users.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod', //typeorm과 db 항상 동기화
       logging: process.env.NODE_ENV !== 'prod', // console에 로그 표시
-      entities: [User],
+      entities: [User, Verification],
     }),
     // graphql 스키마 자동 작성
     // https://docs.nestjs.com/graphql/quick-start#code-first
@@ -51,6 +56,11 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
+    }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
   ],
   controllers: [],
